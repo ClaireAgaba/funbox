@@ -35,7 +35,7 @@ function initAmbientBackground() {
             this.size = 12 + Math.random() * 16;
             this.speedY = 0.4 + Math.random() * 0.8;
             this.speedX = (Math.random() - 0.5) * 0.6;
-            this.type = Math.random() > 0.4 ? 'heart' : 'padel';
+            this.type = Math.random() > 0.6 ? 'heart' : (Math.random() > 0.4 ? 'padel' : 'sunset');
             this.opacity = 0.15 + Math.random() * 0.35;
             this.rotation = Math.random() * Math.PI * 2;
             this.rotationSpeed = (Math.random() - 0.5) * 0.02;
@@ -56,27 +56,32 @@ function initAmbientBackground() {
                 ctx.fillStyle = '#ff3366';
                 ctx.shadowColor = '#ff2a6d';
                 ctx.shadowBlur = 10;
-                // Draw heart shape
                 const s = this.size * 0.6;
                 ctx.beginPath();
                 ctx.moveTo(0, s * 0.3);
                 ctx.bezierCurveTo(-s, -s * 0.5, -s * 0.9, s * 0.5, 0, s);
                 ctx.bezierCurveTo(s * 0.9, s * 0.5, s, -s * 0.5, 0, s * 0.3);
                 ctx.fill();
-            } else {
-                // Draw neon padel tennis ball
+            } else if (this.type === 'padel') {
                 ctx.fillStyle = '#ccff00';
                 ctx.shadowColor = '#ccff00';
                 ctx.shadowBlur = 12;
                 ctx.beginPath();
                 ctx.arc(0, 0, this.size * 0.45, 0, Math.PI * 2);
                 ctx.fill();
-                // Curved seams
                 ctx.strokeStyle = '#111';
                 ctx.lineWidth = 1.5;
                 ctx.beginPath();
                 ctx.arc(-this.size * 0.15, 0, this.size * 0.35, -Math.PI * 0.4, Math.PI * 0.4);
                 ctx.stroke();
+            } else {
+                // Golden hour sunset sun / star
+                ctx.fillStyle = '#ffaa00';
+                ctx.shadowColor = '#ff7700';
+                ctx.shadowBlur = 15;
+                ctx.beginPath();
+                ctx.arc(0, 0, this.size * 0.35, 0, Math.PI * 2);
+                ctx.fill();
             }
             ctx.restore();
         }
@@ -538,13 +543,14 @@ function initProposal() {
     if (!noBtn || !yesBtn) return;
 
     const wittyExcuses = [
-        "Ball out of bounds! 🎾",
-        "Net violation! 😂",
-        "Racket slipped?",
-        "Error: 'No' is not permitted 🚫",
-        "Wrong swing! Try again 😉",
-        "Are you sure? Re-read the terms!",
-        "Foot fault! 👣",
+        "Level 4+ penalty! 🎾",
+        "Ball out of bounds! 😂",
+        "Racket slipped, try again!",
+        "Error: Pro players cannot decline 🚫",
+        "Net violation! 👣",
+        "Are you scared I'll win? 😉",
+        "Road trip veto rejected! 🚗",
+        "Sunset protocol requires YES! 🌅",
         "Nice try, champ!"
     ];
     let excuseIdx = 0;

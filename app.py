@@ -7,85 +7,85 @@ app = Flask(__name__)
 QUIZ_QUESTIONS = [
     {
         "id": 1,
-        "question": "First up: When we play padel together, what is our actual court strategy?",
+        "question": "Considering you are literally Level 4+ (highest in the country 🙄) and I'm... well, vibing at my own level... what happens when we play?",
         "options": [
-            {"id": "a", "text": "High-IQ tactical wall play & calculated smashes 🧠", "comment": "Okay, look at us being Wimbledon contenders!"},
-            {"id": "b", "text": "Laughing hysterically whenever the ball rebounds off the glass in the wrong direction 😂", "comment": "100% accurate. The glass is definitely our sworn enemy."},
-            {"id": "c", "text": "You carry the team while I look cute and celebrate our points 💅", "comment": "A flawless division of labor, honestly."},
-            {"id": "d", "text": "Pretending we totally understand how the scoring system works 🎾", "comment": "'Is it 30-40 or are we just making up numbers?'"}
+            {"id": "a", "text": "You go easy on me like a gentleman, but I still celebrate every single point like I won Wimbledon 🏆", "comment": "A point won against a Level 4+ counts as an international championship in my book!"},
+            {"id": "b", "text": "I boldly guarantee I will beat you 6-0 through sheer willpower and questionable line calls 💅", "comment": "Confidence is 90% of the game. Watch out!"},
+            {"id": "c", "text": "You do all the running and smashes while I look aesthetic and provide moral support on court 🎾", "comment": "Honest division of labor. Aesthetics matter."},
+            {"id": "d", "text": "We play a friendly match once in a while, but loser admits the other is cooler. (Spoiler: It's me) 😎", "comment": "Rankings don't measure coolness, let's be real."}
         ]
     },
     {
         "id": 2,
-        "question": "A high-speed smash is rocketing straight towards the middle. What's your move?",
+        "question": "We're packing the car for a spontaneous road trip with no set destination. What is your designated duty?",
         "options": [
-            {"id": "a", "text": "Heroically jump across the court to save the point 💪", "comment": "Main character energy! I respect it."},
-            {"id": "b", "text": "Yell 'MINE!' with absolute confidence and completely whiff the air 💨", "comment": "The dedication was there, and that's what counts."},
-            {"id": "c", "text": "We both look at each other, watch the ball bounce, and blame the sun ☀️", "comment": "It's always the sun. Or the wind. Never us."},
-            {"id": "d", "text": "Use the padel racket as a defensive shield and pray 🛡️", "comment": "Safety first, tournament trophy second."}
+            {"id": "a", "text": "Driver & playlist curator (subject to my strict aux cord inspection 🎶)", "comment": "Every great road trip lives and dies by the playlist."},
+            {"id": "b", "text": "Chief Snack Officer & Navigator (even when we take scenic 'wrong' turns) 🍫", "comment": "Getting lost with good snacks is the best part of the trip."},
+            {"id": "c", "text": "Making me laugh the entire drive until my cheeks hurt 😂", "comment": "Best passenger entertainment service guaranteed."},
+            {"id": "d", "text": "All of the above, plus pulling over whenever I spot a breathtaking view 📸", "comment": "10/10 road trip co-pilot etiquette."}
         ]
     },
     {
         "id": 3,
-        "question": "Post-match protocol: What are the terms of peace after a tough set?",
+        "question": "Post-game or weekend evening: How are we handling sunset watching?",
         "options": [
-            {"id": "a", "text": "Loser buys iced smoothies or matcha lattes immediately 🥤", "comment": "The only acceptable post-game hydration."},
-            {"id": "b", "text": "Immediate dinner date to discuss key tactical blunders over food 🍕", "comment": "Post-game breakdown with good food is undefeated."},
-            {"id": "c", "text": "A rematch next week because nobody accepts defeat 😤", "comment": "Challenge accepted. Bring your best serve!"},
-            {"id": "d", "text": "All of the above (Non-negotiable contract) ✨", "comment": "Bingo. You passed the real test."}
+            {"id": "a", "text": "Chilled drinks, favorite songs, watching golden hour with zero rush 🌅🍹", "comment": "The ultimate decompression after a hectic week."},
+            {"id": "b", "text": "Deep conversations and laughing about missed padel shots 💬", "comment": "Debriefing our match highlights (and lowlights) over sunset is top tier."},
+            {"id": "c", "text": "Finding a secret rooftop or hilltop spot with the prettiest view 🌄", "comment": "I'm scouting the locations as we speak."},
+            {"id": "d", "text": "Analyzing if a Level 4+ vibora could technically smash into the setting sun 🚀", "comment": "Don't tempt yourself, keep the balls in the court!"}
         ]
     },
     {
         "id": 4,
-        "question": "Honest vibe check: Since we're getting to know each other, how is it going?",
+        "question": "Final challenge: Are you brave enough to step on court for a casual game, knowing I plan to win regardless of your ranking?",
         "options": [
-            {"id": "a", "text": "10/10 court chemistry & even better conversation 🌟", "comment": "Agreed! Couldn't have asked for a better partner."},
-            {"id": "b", "text": "Suspiciously fun... definitely need another round soon 👀", "comment": "Consider your schedule booked!"},
-            {"id": "c", "text": "I'm already secretly practicing my smashes to impress you 🎾", "comment": "Haha, don't worry, you already do!"},
-            {"id": "d", "text": "Off the charts! When's our next hangout? 🚀", "comment": "Right after you finish this app!"}
+            {"id": "a", "text": "Challenge accepted! I'll prepare to be humbled by your unpredicted tactics 🫡", "comment": "That's the spirit! Prepare for chaos."},
+            {"id": "b", "text": "Only if we catch a scenic sunset and grab dinner right after 🌅🍽️", "comment": "Deal! That was always part of the master plan."},
+            {"id": "c", "text": "I wouldn't miss a game with you for anything 🌟", "comment": "Smooth answer... you definitely earned points for that one."},
+            {"id": "d", "text": "Yes, but winner gets bragging rights until our next road trip 🚗💨", "comment": "High stakes! Game on!"}
         ]
     }
 ]
 
 LOVE_COMPLIMENTS = [
-    "You have the best smile on and off the court ✨",
-    "Even when your shots hit the fence, you make it look cool 🎾",
-    "Getting to know you has been my favorite part of the week 😊",
-    "Your energy is contagious in the best way possible 💫",
-    "I'd choose you as my padel doubles partner any day of the week 🏆",
-    "You're effortlessly funny and ridiculously charming 💖",
-    "Every conversation with you feels like no time has passed at all ⏳",
-    "Secretly looking forward to our next match (and whatever comes after) 🥂"
+    "Ranked Level 4+ on the court, but ranked #1 in charm in my book ✨",
+    "I might not have your backhand, but I definitely have your attention 😉",
+    "Getting to know you has been my absolute favorite plot twist this month 💫",
+    "Ready for scenic sunsets, spontaneous road trips, and beating you at padel (somehow) 🌅",
+    "You make every conversation feel effortlessly fun and easy 😊",
+    "Even as the country's top player, you're surprisingly humble and sweet 🎾",
+    "Your laugh is contagious in the best way possible 💖",
+    "Secretly counting down to our next match, sunset drive, and dinner 🥂"
 ]
 
 COUPONS = [
     {
         "id": "c1",
-        "icon": "🥤",
-        "title": "Post-Padel Smoothie / Drink",
-        "desc": "Redeemable for your favorite iced beverage, paid for by me after our next session.",
-        "badge": "Valid Anytime"
+        "icon": "🌅",
+        "title": "Golden Hour Sunset Pass",
+        "desc": "Redeemable for an evening drive to catch the sunset, complete with iced drinks and zero rush.",
+        "badge": "VIP Sunset Perk"
     },
     {
         "id": "c2",
-        "icon": "🎾",
-        "title": "Ball Boy / Ball Girl Pass",
-        "desc": "I will retrieve 100% of the wild balls that bounce over the fence without complaining.",
-        "badge": "Special Court Perk"
+        "icon": "🚗",
+        "title": "Spontaneous Road Trip Co-Pilot",
+        "desc": "One day-trip getaway. You pick the direction, I supply snacks, good vibes, and car karaoke.",
+        "badge": "Adventure Mode"
     },
     {
         "id": "c3",
-        "icon": "🍽️",
-        "title": "Dinner Date of Your Choice",
-        "desc": "You pick the spot, you pick the cuisine, zero objections permitted.",
-        "badge": "VIP Date Pass"
+        "icon": "🎾",
+        "title": "The Underdog Padel Match",
+        "desc": "A casual friendly game where you promise not to unleash 100% tournament power (and I still try to win).",
+        "badge": "Friendly Rematch"
     },
     {
         "id": "c4",
-        "icon": "💆‍♂️",
-        "title": "Post-Match Shoulder Reset",
-        "desc": "10-minute shoulder / hand massage to recover from carrying our team.",
-        "badge": "Recovery Mode"
+        "icon": "🍦",
+        "title": "Post-Match Winner's Treat",
+        "desc": "Loser buys ice cream, smoothies, or dinner. (Since you're Level 4+, the odds are high you're treating me 😉).",
+        "badge": "Sweet Victory"
     }
 ]
 
@@ -101,12 +101,11 @@ def get_quiz():
 def grade_quiz():
     data = request.get_json() or {}
     answers = data.get("answers", {})
-    # No matter what, it's 100% chemistry!
     return jsonify({
         "score": 100,
-        "title": "Championship Chemistry: A++ 🏆",
-        "verdict": "Diagnostics complete: You two possess an illegal amount of court synergy and banter. The league has never seen a duo this promising.",
-        "badge": "Certified Grand Slam Partner"
+        "title": "Unbeatable Synergy: 100% Match! 🏆",
+        "verdict": "Diagnostics complete: Even with the Level 4+ vs. Challenger gap, your chemistry across road trips, sunsets, and court banter is off the charts. The federation officially approves this duo.",
+        "badge": "Certified MVP & Adventure Partner"
     })
 
 @app.route('/api/compliments', methods=['GET'])
