@@ -1,7 +1,70 @@
 import os
+import sqlite3
+from datetime import datetime
 from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
+DB_PATH = os.path.join(os.path.dirname(__file__), 'app_data.db')
+
+def get_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db():
+    with get_db() as conn:
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS sessions (
+                session_id TEXT PRIMARY KEY,
+                created_at TIMESTAMP,
+                last_active TIMESTAMP
+            )
+        ''')
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS quiz_answers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                session_id TEXT,
+                question_id INTEGER,
+                question_text TEXT,
+                option_id TEXT,
+                option_text TEXT,
+                created_at TIMESTAMP
+            )
+        ''')
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS heart_drawings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                session_id TEXT,
+                image_data TEXT,
+                created_at TIMESTAMP
+            )
+        ''')
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS heart_taps (
+                session_id TEXT PRIMARY KEY,
+                tap_count INTEGER,
+                updated_at TIMESTAMP
+            )
+        ''')
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS proposals (
+                session_id TEXT PRIMARY KEY,
+                accepted INTEGER,
+                accepted_at TIMESTAMP
+            )
+        ''')
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS vouchers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                session_id TEXT,
+                voucher_id TEXT,
+                voucher_title TEXT,
+                claimed_at TIMESTAMP
+            )
+        ''')
+        conn.commit()
+
+init_db()
 
 QUIZ_QUESTIONS = [
     {
@@ -88,6 +151,14 @@ COUPONS = [
     }
 ]
 
+def touch_session(conn, session_id):
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    conn.execute('''
+        INSERT INTO sessions (session_id, created_at, last_active)
+        VALUES (?, ?, ?)
+        ON CONFLICT(session_id) DO UPDATE SET last_active = ?
+    ''', (session_id, now, now, now))
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -96,15 +167,6 @@ def index():
 def get_quiz():
     return jsonify({"questions": QUIZ_QUESTIONS})
 
-@app.route('/api/quiz-grade', methods=['POST'])
-def grade_quiz():
-    return jsonify({
-        "score": 100,
-        "title": "100% Vibe Match ✨",
-        "verdict": "Okay yeah, our chemistry is undeniably great. The road trip, sunset watching, and padel game are officially happening.",
-        "badge": "Approved by ACL"
-    })
-
 @app.route('/api/compliments', methods=['GET'])
 def get_compliments():
     return jsonify({"compliments": LOVE_COMPLIMENTS})
@@ -112,6 +174,161 @@ def get_compliments():
 @app.route('/api/coupons', methods=['GET'])
 def get_coupons():
     return jsonify({"coupons": COUPONS})
+
+# --- Activity Saving Endpoints ---
+
+@app.route('/api/save-answer', methods=['POST'])
+def save_answer():
+    data = request.get_json() or {}
+    session_id = data.get('sessionId', 'guest')
+    q_id = data.get('questionId')
+    q_text = data.get('questionText', '')
+    opt_id = data.get('optionId')
+    opt_text = data.get('optionText', '')
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    with get_db() as conn:
+        touch_session(conn, session_id)
+        # Update or insert answer for this question
+        conn.execute('''
+            DELETE FROM quiz_answers WHERE session_id = ? AND question_id = ?
+        ''', (session_id, q_id))
+        conn.execute('''
+            INSERT INTO quiz_answers (session_id, question_id, question_text, option_id, option_text, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (session_id, q_id, q_text, opt_id, opt_text, now))
+        conn.commit()
+
+    return jsonify({"status": "saved"})
+
+@app.route('/api/save-heart', methods=['POST'])
+def save_heart():
+    data = request.get_json() or {}
+    session_id = data.get('sessionId', 'guest')
+    image_data = data.get('imageData', '')
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    if image_data:
+        with get_db() as conn:
+            touch_session(conn, session_id)
+            conn.execute('''
+                INSERT INTO heart_drawings (session_id, image_data, created_at)
+                VALUES (?, ?, ?)
+            ''', (session_id, image_data, now))
+            conn.commit()
+
+    return jsonify({"status": "heart_saved"})
+
+@app.route('/api/save-taps', methods=['POST'])
+def save_taps():
+    data = request.get_json() or {}
+    session_id = data.get('sessionId', 'guest')
+    tap_count = int(data.get('tapCount', 0))
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    with get_db() as conn:
+        touch_session(conn, session_id)
+        conn.execute('''
+            INSERT INTO heart_taps (session_id, tap_count, updated_at)
+            VALUES (?, ?, ?)
+            ON CONFLICT(session_id) DO UPDATE SET tap_count = ?, updated_at = ?
+        ''', (session_id, tap_count, now, tap_count, now))
+        conn.commit()
+
+    return jsonify({"status": "taps_saved"})
+
+@app.route('/api/save-proposal', methods=['POST'])
+def save_proposal():
+    data = request.get_json() or {}
+    session_id = data.get('sessionId', 'guest')
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    with get_db() as conn:
+        touch_session(conn, session_id)
+        conn.execute('''
+            INSERT INTO proposals (session_id, accepted, accepted_at)
+            VALUES (?, 1, ?)
+            ON CONFLICT(session_id) DO UPDATE SET accepted = 1, accepted_at = ?
+        ''', (session_id, now, now))
+        conn.commit()
+
+    return jsonify({"status": "accepted"})
+
+@app.route('/api/save-voucher', methods=['POST'])
+def save_voucher():
+    data = request.get_json() or {}
+    session_id = data.get('sessionId', 'guest')
+    v_id = data.get('voucherId')
+    v_title = data.get('voucherTitle', '')
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    with get_db() as conn:
+        touch_session(conn, session_id)
+        # Avoid duplicate claims in db
+        existing = conn.execute('''
+            SELECT id FROM vouchers WHERE session_id = ? AND voucher_id = ?
+        ''', (session_id, v_id)).fetchone()
+        if not existing:
+            conn.execute('''
+                INSERT INTO vouchers (session_id, voucher_id, voucher_title, claimed_at)
+                VALUES (?, ?, ?, ?)
+            ''', (session_id, v_id, v_title, now))
+            conn.commit()
+
+    return jsonify({"status": "voucher_saved"})
+
+# --- Private Results Dashboard for Claire ---
+
+@app.route('/results')
+@app.route('/dashboard')
+def results():
+    with get_db() as conn:
+        sessions = conn.execute('''
+            SELECT session_id, created_at, last_active FROM sessions ORDER BY last_active DESC
+        ''').fetchall()
+
+        all_results = []
+        for s in sessions:
+            sid = s['session_id']
+            answers = conn.execute('''
+                SELECT question_id, question_text, option_text, created_at 
+                FROM quiz_answers 
+                WHERE session_id = ? 
+                ORDER BY question_id ASC
+            ''', (sid,)).fetchall()
+
+            drawings = conn.execute('''
+                SELECT image_data, created_at 
+                FROM heart_drawings 
+                WHERE session_id = ? 
+                ORDER BY id DESC LIMIT 5
+            ''', (sid,)).fetchall()
+
+            taps = conn.execute('''
+                SELECT tap_count, updated_at FROM heart_taps WHERE session_id = ?
+            ''', (sid,)).fetchone()
+
+            proposal = conn.execute('''
+                SELECT accepted, accepted_at FROM proposals WHERE session_id = ?
+            ''', (sid,)).fetchone()
+
+            vouchers = conn.execute('''
+                SELECT voucher_id, voucher_title, claimed_at FROM vouchers WHERE session_id = ?
+            ''', (sid,)).fetchall()
+
+            all_results.append({
+                "session_id": sid,
+                "created_at": s['created_at'],
+                "last_active": s['last_active'],
+                "answers": [dict(a) for a in answers],
+                "drawings": [dict(d) for d in drawings],
+                "tap_count": taps['tap_count'] if taps else 0,
+                "accepted_proposal": bool(proposal and proposal['accepted']),
+                "accepted_at": proposal['accepted_at'] if proposal else None,
+                "vouchers": [dict(v) for v in vouchers]
+            })
+
+    return render_template('results.html', results=all_results)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5001))

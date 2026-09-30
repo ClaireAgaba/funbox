@@ -9,6 +9,18 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================================
+   0. Session ID Management
+   ========================================================================== */
+function getSessionId() {
+    let sid = localStorage.getItem('padel_vibe_session_id');
+    if (!sid) {
+        sid = 'user_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
+        localStorage.setItem('padel_vibe_session_id', sid);
+    }
+    return sid;
+}
+
+/* ==========================================================================
    1. Panel Stepper Navigation
    ========================================================================== */
 function initPanelNavigation() {
@@ -252,7 +264,7 @@ function initQuiz() {
                 <h3 class="question-text">${q.question}</h3>
                 <div class="options-list">
                     ${q.options.map(opt => `
-                        <button class="option-btn" data-id="${opt.id}" data-comment="${encodeURIComponent(opt.comment)}">
+                        <button class="option-btn" data-id="${opt.id}" data-text="${encodeURIComponent(opt.text)}" data-comment="${encodeURIComponent(opt.comment)}">
                             <span>${opt.text}</span>
                         </button>
                     `).join('')}
@@ -273,11 +285,25 @@ function initQuiz() {
                 optionButtons.forEach(b => b.classList.remove('selected'));
                 btn.classList.add('selected');
                 const comment = decodeURIComponent(btn.getAttribute('data-comment'));
+                const optText = decodeURIComponent(btn.getAttribute('data-text'));
                 const optId = btn.getAttribute('data-id');
                 userAnswers[q.id] = optId;
 
                 feedbackSlot.innerHTML = `<div class="option-comment">💡 ${comment}</div>`;
                 nextBtn.classList.remove('hidden');
+
+                // Save answer to server in background so Claire can see it!
+                fetch('/api/save-answer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: getSessionId(),
+                        questionId: q.id,
+                        questionText: q.question,
+                        optionId: optId,
+                        optionText: optText
+                    })
+                }).catch(() => {});
 
                 if (window.confetti) {
                     confetti({
@@ -425,6 +451,16 @@ function initHeartStudio() {
                 complimentBox.textContent = `"${compliments[compIdx]}"`;
             }
 
+            // Sync taps count in background
+            fetch('/api/save-taps', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sessionId: getSessionId(),
+                    tapCount: tapCount
+                })
+            }).catch(() => {});
+
             if (window.confetti) {
                 const rect = heartCanvas.getBoundingClientRect();
                 const originX = (rect.left + rect.width / 2) / window.innerWidth;
@@ -520,6 +556,17 @@ function initHeartStudio() {
             scoreBadge.textContent = 'Symmetry: 99.9% 💖';
             feedbackText.textContent = '"Heart analyzed! Assessment: 100% genuine and undeniably cute."';
 
+            // Save his drawn heart image to server for Claire!
+            const imgData = drawCanvas.toDataURL('image/png');
+            fetch('/api/save-heart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sessionId: getSessionId(),
+                    imageData: imgData
+                })
+            }).catch(() => {});
+
             if (window.confetti) {
                 confetti({
                     particleCount: 50,
@@ -574,6 +621,15 @@ function initProposal() {
         celebrationCard?.classList.remove('hidden');
         celebrationCard?.scrollIntoView({ behavior: 'smooth' });
 
+        // Save YES acceptance to server!
+        fetch('/api/save-proposal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                sessionId: getSessionId()
+            })
+        }).catch(() => {});
+
         const duration = 2.5 * 1000;
         const end = Date.now() + duration;
 
@@ -612,7 +668,7 @@ function initVouchers() {
 
     function renderCoupons(coupons) {
         vouchersGrid.innerHTML = coupons.map(c => `
-            <div class="voucher-card" data-id="${c.id}">
+            <div class="voucher-card" data-id="${c.id}" data-title="${encodeURIComponent(c.title)}">
                 <div>
                     <div class="voucher-header">
                         <span class="voucher-icon">${c.icon}</span>
@@ -632,6 +688,20 @@ function initVouchers() {
                 card.classList.add('redeemed');
                 const action = card.querySelector('.voucher-action');
                 if (action) action.textContent = 'Claimed! 💖';
+
+                const vId = card.getAttribute('data-id');
+                const vTitle = decodeURIComponent(card.getAttribute('data-title'));
+
+                // Save claimed voucher to server!
+                fetch('/api/save-voucher', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: getSessionId(),
+                        voucherId: vId,
+                        voucherTitle: vTitle
+                    })
+                }).catch(() => {});
 
                 if (window.confetti) {
                     confetti({

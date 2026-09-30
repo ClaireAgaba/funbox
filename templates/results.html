@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>His Answers & Heart Drawings 💌</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .dashboard-container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 3rem 1.25rem;
+        }
+        .dash-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .dash-header h1 {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .dash-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        .session-card {
+            margin-bottom: 2rem;
+            padding: 2rem 1.75rem;
+        }
+        .session-meta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .session-time {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .badges-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .status-pill {
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+        }
+        .status-pill.yes {
+            background: rgba(204, 255, 0, 0.15);
+            color: var(--padel-lime);
+            border: 1px solid rgba(204, 255, 0, 0.35);
+        }
+        .status-pill.heart {
+            background: rgba(255, 42, 109, 0.15);
+            color: var(--accent-rose);
+            border: 1px solid rgba(255, 42, 109, 0.35);
+        }
+        .section-block {
+            margin-bottom: 1.5rem;
+        }
+        .section-block-title {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--golden-sunset);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .answer-item {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            margin-bottom: 10px;
+        }
+        .answer-q {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .answer-a {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .drawing-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        .drawing-preview {
+            width: 140px;
+            height: 140px;
+            background: rgba(14, 9, 29, 0.95);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            object-fit: contain;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-secondary);
+        }
+        .refresh-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-glass);
+            color: white;
+            padding: 8px 18px;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            font-family: var(--font-heading);
+            font-weight: 600;
+        }
+        .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="ambient-canvas"></canvas>
+
+    <div class="dashboard-container">
+        <header class="dash-header">
+            <h1>Activity Dashboard 💌</h1>
+            <p>Private page for ACL: See his answers, drawn hearts &amp; claimed vouchers in real time.</p>
+            <button class="refresh-btn" onclick="window.location.reload()">
+                <span>🔄 Refresh Answers</span>
+            </button>
+        </header>
+
+        {% if not results %}
+            <div class="glass-panel empty-state">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🎾🌅</div>
+                <h3>No activity recorded yet!</h3>
+                <p>Send him the link. As soon as he answers questions, pumps the heart, draws a heart, or clicks YES, everything will appear right here!</p>
+            </div>
+        {% else %}
+            {% for res in results %}
+                <div class="glass-panel session-card">
+                    <div class="session-meta">
+                        <div>
+                            <span style="font-weight: 700; color: white;">Visitor Activity</span>
+                            <div class="session-time">Last active: {{ res.last_active }}</div>
+                        </div>
+                        <div class="badges-row">
+                            {% if res.accepted_proposal %}
+                                <span class="status-pill yes">✅ Said YES to Road Trip &amp; Padel!</span>
+                            {% endif %}
+                            {% if res.tap_count > 0 %}
+                                <span class="status-pill heart">💓 Pumped Heart: {{ res.tap_count }} times</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Heart Drawings -->
+                    {% if res.drawings %}
+                        <div class="section-block">
+                            <div class="section-block-title">
+                                <span>✍️ Heart He Drew For You</span>
+                            </div>
+                            <div class="drawing-gallery">
+                                {% for d in res.drawings %}
+                                    <img src="{{ d.image_data }}" alt="Drawn heart" class="drawing-preview">
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Quiz Answers -->
+                    {% if res.answers %}
+                        <div class="section-block">
+                            <div class="section-block-title">
+                                <span>🎾 Quiz Selections</span>
+                            </div>
+                            {% for a in res.answers %}
+                                <div class="answer-item">
+                                    <div class="answer-q">Q{{ a.question_id }}: {{ a.question_text }}</div>
+                                    <div class="answer-a">👉 Selected: {{ a.option_text }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Claimed Vouchers -->
+                    {% if res.vouchers %}
+                        <div class="section-block">
+                            <div class="section-block-title">
+                                <span>🎟️ Vouchers He Claimed</span>
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                {% for v in res.vouchers %}
+                                    <span style="background: rgba(204, 255, 0, 0.1); border: 1px solid rgba(204, 255, 0, 0.3); color: var(--padel-lime); padding: 5px 12px; border-radius: var(--radius-full); font-size: 0.85rem; font-weight: 600;">
+                                        ✓ {{ v.voucher_title }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <script>
+        // Minimal ambient canvas
+        const canvas = document.getElementById('ambient-canvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // soft static star points
+            for (let i = 0; i < 30; i++) {
+                ctx.fillStyle = 'rgba(255, 255, 255, ' + Math.random() * 0.3 + ')';
+                ctx.beginPath();
+                ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+    </script>
+</body>
+</html>
