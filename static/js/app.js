@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     initAmbientBackground();
     initAudioSynth();
+    initPanelNavigation();
     initQuiz();
     initHeartStudio();
     initProposal();
@@ -8,7 +9,39 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================================
-   1. Ambient Canvas: Floating Hearts & Padel Balls
+   1. Panel Stepper Navigation
+   ========================================================================== */
+function initPanelNavigation() {
+    const stepButtons = document.querySelectorAll('.step-btn');
+    stepButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const step = parseInt(btn.getAttribute('data-step'), 10);
+            goToPanel(step);
+        });
+    });
+}
+
+window.goToPanel = function(stepNumber) {
+    const panels = document.querySelectorAll('.panel');
+    const stepButtons = document.querySelectorAll('.step-btn');
+
+    panels.forEach(p => p.classList.remove('active'));
+    stepButtons.forEach(b => b.classList.remove('active'));
+
+    const targetPanel = document.getElementById(`panel-${stepNumber}`);
+    const targetBtn = document.querySelector(`.step-btn[data-step="${stepNumber}"]`);
+
+    if (targetPanel) {
+        targetPanel.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    if (targetBtn) {
+        targetBtn.classList.add('active');
+    }
+};
+
+/* ==========================================================================
+   2. Ambient Canvas: Floating Hearts, Sunsets & Padel Balls
    ========================================================================== */
 function initAmbientBackground() {
     const canvas = document.getElementById('ambient-canvas');
@@ -75,7 +108,6 @@ function initAmbientBackground() {
                 ctx.arc(-this.size * 0.15, 0, this.size * 0.35, -Math.PI * 0.4, Math.PI * 0.4);
                 ctx.stroke();
             } else {
-                // Golden hour sunset sun / star
                 ctx.fillStyle = '#ffaa00';
                 ctx.shadowColor = '#ff7700';
                 ctx.shadowBlur = 15;
@@ -103,7 +135,7 @@ function initAmbientBackground() {
 }
 
 /* ==========================================================================
-   2. Web Audio API: Romantic Lofi Ambient Synth Chords
+   3. Web Audio API: Romantic Sunset Ambient Synth Chords
    ========================================================================== */
 function initAudioSynth() {
     const audioBtn = document.getElementById('audio-toggle');
@@ -115,7 +147,6 @@ function initAudioSynth() {
     let isPlaying = false;
     let timerId = null;
 
-    // Sweet romantic progression in C major (Cmaj7 -> Am7 -> Fmaj7 -> G7sus4)
     const chords = [
         [261.63, 329.63, 392.00, 493.88], // Cmaj7
         [220.00, 261.63, 329.63, 392.00], // Am7
@@ -137,7 +168,6 @@ function initAudioSynth() {
             osc.type = 'sine';
             osc.frequency.setValueAtTime(freq, now);
 
-            // Soft mellow attack & release
             gain.gain.setValueAtTime(0, now);
             gain.gain.linearRampToValueAtTime(0.045, now + 1.2);
             gain.gain.exponentialRampToValueAtTime(0.0001, now + 4.8);
@@ -169,7 +199,7 @@ function initAudioSynth() {
         } else {
             isPlaying = false;
             if (timerId) clearTimeout(timerId);
-            audioLabel.textContent = 'Play Vibe Music';
+            audioLabel.textContent = 'Sunset Vibe';
             audioIcon.textContent = '🎵';
             audioBtn.style.borderColor = 'rgba(255, 42, 109, 0.35)';
         }
@@ -177,11 +207,10 @@ function initAudioSynth() {
 }
 
 /* ==========================================================================
-   3. Act 1: The Padel & Vibe Quiz
+   4. Panel 2: The Quiz
    ========================================================================== */
 function initQuiz() {
     const quizContainer = document.getElementById('quiz-container');
-    const startQuizBtn = document.getElementById('start-quiz-btn');
     const progressFill = document.getElementById('quiz-progress-fill');
     const stepIndicator = document.getElementById('quiz-step-indicator');
     const resultCard = document.getElementById('quiz-result-card');
@@ -190,10 +219,6 @@ function initQuiz() {
     let currentIdx = 0;
     const userAnswers = {};
 
-    startQuizBtn?.addEventListener('click', () => {
-        document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
-    });
-
     fetch('/api/quiz')
         .then(res => res.json())
         .then(data => {
@@ -201,16 +226,12 @@ function initQuiz() {
             renderQuestion(0);
         })
         .catch(() => {
-            // Fallback questions if offline
             questions = [
                 {
                     id: 1,
-                    question: "When we play padel together, what is our actual court strategy?",
+                    question: "We talk about padel literally all the time. Since your level is way higher than mine, when we finally play, what's the actual plan?",
                     options: [
-                        { id: "a", text: "High-IQ tactical wall play & calculated smashes 🧠", comment: "Wimbledon contenders in the making!" },
-                        { id: "b", text: "Laughing whenever the ball rebounds off the glass wrong 😂", comment: "100% accurate. The glass has personal beef with us." },
-                        { id: "c", text: "You carry the team while I look cute celebrating points 💅", comment: "A solid division of labor." },
-                        { id: "d", text: "Pretending we totally understand how scoring works 🎾", comment: "Is it 40-15 or are we inventing numbers?" }
+                        { id: "a", text: "You go easy on me, but I celebrate every single point like I won a trophy 🏆", comment: "If I score even one point against you, I'm never letting you forget it 😂" }
                     ]
                 }
             ];
@@ -222,7 +243,6 @@ function initQuiz() {
         currentIdx = idx;
         const q = questions[idx];
 
-        // Update progress
         const pct = Math.round(((idx + 1) / questions.length) * 100);
         if (progressFill) progressFill.style.width = `${pct}%`;
         if (stepIndicator) stepIndicator.textContent = `Question ${idx + 1} of ${questions.length}`;
@@ -239,7 +259,7 @@ function initQuiz() {
                 </div>
                 <div id="option-feedback-slot"></div>
                 <button id="next-q-btn" class="cta-button quiz-next-btn hidden">
-                    <span>${idx === questions.length - 1 ? 'Show Partner Rating 🏆' : 'Next Question 🎾'}</span>
+                    <span>${idx === questions.length - 1 ? 'See Our Compatibility ✨' : 'Next Question →'}</span>
                 </button>
             </div>
         `;
@@ -259,7 +279,6 @@ function initQuiz() {
                 feedbackSlot.innerHTML = `<div class="option-comment">💡 ${comment}</div>`;
                 nextBtn.classList.remove('hidden');
 
-                // Mini celebratory pop
                 if (window.confetti) {
                     confetti({
                         particleCount: 15,
@@ -280,37 +299,23 @@ function initQuiz() {
     }
 
     function finishQuiz() {
-        fetch('/api/quiz-grade', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ answers: userAnswers })
-        })
-        .then(res => res.json())
-        .then(data => {
-            quizContainer.classList.add('hidden');
-            resultCard.classList.remove('hidden');
+        quizContainer.classList.add('hidden');
+        resultCard.classList.remove('hidden');
 
-            document.getElementById('result-title').textContent = data.title;
-            document.getElementById('result-verdict').textContent = data.verdict;
-            document.getElementById('result-badge').textContent = data.badge;
-
-            // Grand confetti blast
-            if (window.confetti) {
-                confetti({
-                    particleCount: 100,
-                    spread: 80,
-                    origin: { y: 0.6 }
-                });
-            }
-        });
+        if (window.confetti) {
+            confetti({
+                particleCount: 80,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
     }
 }
 
 /* ==========================================================================
-   4. Act 2: Interactive Heart Studio (Parametric + Draw Canvas)
+   5. Panel 3: Interactive Heart Studio
    ========================================================================== */
 function initHeartStudio() {
-    // Tabs
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
@@ -324,7 +329,7 @@ function initHeartStudio() {
         });
     });
 
-    /* --- Tab 1: Parametric Beating Cardioid Heart --- */
+    // Parametric Heart
     const heartCanvas = document.getElementById('parametric-heart-canvas');
     if (heartCanvas) {
         const hCtx = heartCanvas.getContext('2d');
@@ -338,12 +343,14 @@ function initHeartStudio() {
         const complimentBox = document.getElementById('compliment-text');
 
         let compliments = [
-            "You have the best smile on and off the court ✨",
-            "Even when your shot hits the fence, you make it look cool 🎾",
-            "Getting to know you has been the best part of my week 😊",
-            "I'd choose you as my padel doubles partner any day 🏆",
-            "You're effortlessly funny and ridiculously charming 💖",
-            "Secretly looking forward to our next match (and drinks after) 🥂"
+            "You're genuinely so smart and I love your takeaways from our conversations 🧠✨",
+            "How much you love nature and being outdoors 🌿🌅",
+            "Even though your padel level is way higher than mine, you're so down to earth about it 🎾",
+            "How effortless and easy our conversations always feel 😊",
+            "Looking forward to that road trip, good music, and catching the sunset with you 🚗🌄",
+            "You have the best perspective on things and I really admire that 💫",
+            "I still think I could score a couple points against you on court though 😉",
+            "Getting to know you has been such a sweet highlight lately 💖"
         ];
         let compIdx = 0;
 
@@ -355,7 +362,6 @@ function initHeartStudio() {
         function drawHeart() {
             hCtx.clearRect(0, 0, hWidth, hHeight);
 
-            // Smooth scale interpolation
             heartScale += (targetScale - heartScale) * 0.12;
             pulseAngle += 0.05;
             const naturalBeat = Math.sin(pulseAngle) * 0.4;
@@ -364,10 +370,8 @@ function initHeartStudio() {
             hCtx.save();
             hCtx.translate(hWidth / 2, hHeight / 2 - 15);
 
-            // Glowing Heart Contour
             hCtx.beginPath();
             for (let t = 0; t <= Math.PI * 2; t += 0.02) {
-                // Parametric equation of a heart
                 const x = 16 * Math.pow(Math.sin(t), 3);
                 const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
                 if (t === 0) hCtx.moveTo(x * currentScale, y * currentScale);
@@ -375,7 +379,6 @@ function initHeartStudio() {
             }
             hCtx.closePath();
 
-            // Gradient fill
             const grad = hCtx.createRadialGradient(0, 0, 10, 0, 0, 120);
             grad.addColorStop(0, '#ff6584');
             grad.addColorStop(0.6, '#ff2a6d');
@@ -385,7 +388,6 @@ function initHeartStudio() {
             hCtx.shadowBlur = 24;
             hCtx.fill();
 
-            // Neon stroke outline
             hCtx.strokeStyle = '#ffffff';
             hCtx.lineWidth = 2.5;
             hCtx.shadowBlur = 10;
@@ -411,36 +413,34 @@ function initHeartStudio() {
         }
         drawHeart();
 
-        heartCanvas.addEventListener('click', (e) => {
+        heartCanvas.addEventListener('click', () => {
             targetScale = 11.2;
             setTimeout(() => { targetScale = 8.5; }, 180);
 
             tapCount++;
             if (tapCountEl) tapCountEl.textContent = tapCount;
 
-            // Cycle compliment
             compIdx = (compIdx + 1) % compliments.length;
             if (complimentBox) {
                 complimentBox.textContent = `"${compliments[compIdx]}"`;
             }
 
-            // Burst mini hearts
             if (window.confetti) {
                 const rect = heartCanvas.getBoundingClientRect();
                 const originX = (rect.left + rect.width / 2) / window.innerWidth;
                 const originY = (rect.top + rect.height / 2) / window.innerHeight;
                 confetti({
-                    particleCount: 22,
-                    spread: 60,
+                    particleCount: 20,
+                    spread: 55,
                     startVelocity: 25,
-                    colors: ['#ff2a6d', '#ff6584', '#ccff00', '#ffffff'],
+                    colors: ['#ff2a6d', '#ff6584', '#ffaa00', '#ffffff'],
                     origin: { x: originX, y: originY }
                 });
             }
         });
     }
 
-    /* --- Tab 2: Draw Your Own Heart Canvas --- */
+    // Draw Canvas
     const drawCanvas = document.getElementById('drawing-canvas');
     if (drawCanvas) {
         const dCtx = drawCanvas.getContext('2d');
@@ -512,13 +512,13 @@ function initHeartStudio() {
 
         rateBtn?.addEventListener('click', () => {
             if (drawnPoints.length < 15) {
-                alert("Draw a heart first! Don't leave the canvas empty 😊");
+                alert("Draw a heart first! Don't leave it blank 😊");
                 return;
             }
 
             feedbackCard?.classList.remove('hidden');
             scoreBadge.textContent = 'Symmetry: 99.9% 💖';
-            feedbackText.textContent = '"Heart shape analyzed! Assessment: 100% genuine and undeniably cute. High chemistry detected!"';
+            feedbackText.textContent = '"Heart analyzed! Assessment: 100% genuine and undeniably cute."';
 
             if (window.confetti) {
                 confetti({
@@ -532,7 +532,7 @@ function initHeartStudio() {
 }
 
 /* ==========================================================================
-   5. Act 3: The Runaway Date Proposal
+   6. Panel 4: The Proposal (Runaway NO)
    ========================================================================== */
 function initProposal() {
     const noBtn = document.getElementById('no-btn');
@@ -543,23 +543,21 @@ function initProposal() {
     if (!noBtn || !yesBtn) return;
 
     const wittyExcuses = [
-        "Level 4+ penalty! 🎾",
-        "Ball out of bounds! 😂",
-        "Racket slipped, try again!",
-        "Error: Pro players cannot decline 🚫",
-        "Net violation! 👣",
-        "Are you scared I'll win? 😉",
-        "Road trip veto rejected! 🚗",
-        "Sunset protocol requires YES! 🌅",
+        "Nope, not an option! 😂",
+        "Road trip is mandatory 🚗",
+        "Padel match is pending 🎾",
+        "You can't escape this sunset 🌅",
+        "Try the other button 😉",
+        "Error: 'No' does not exist!",
+        "Are you sure? Try again!",
         "Nice try, champ!"
     ];
     let excuseIdx = 0;
 
     function dodge() {
-        const areaRect = buttonsArea.getBoundingClientRect();
-        const maxOffset = 130;
+        const maxOffset = 110;
         const randomX = (Math.random() - 0.5) * maxOffset * 2;
-        const randomY = (Math.random() - 0.5) * 60;
+        const randomY = (Math.random() - 0.5) * 50;
 
         noBtn.style.transform = `translate(${randomX}px, ${randomY}px) scale(0.9)`;
         noBtn.innerText = wittyExcuses[excuseIdx % wittyExcuses.length];
@@ -576,19 +574,18 @@ function initProposal() {
         celebrationCard?.classList.remove('hidden');
         celebrationCard?.scrollIntoView({ behavior: 'smooth' });
 
-        // Extravagant confetti & fireworks
-        const duration = 3 * 1000;
+        const duration = 2.5 * 1000;
         const end = Date.now() + duration;
 
         (function frame() {
             confetti({
-                particleCount: 5,
+                particleCount: 4,
                 angle: 60,
                 spread: 55,
                 origin: { x: 0 }
             });
             confetti({
-                particleCount: 5,
+                particleCount: 4,
                 angle: 120,
                 spread: 55,
                 origin: { x: 1 }
@@ -602,7 +599,7 @@ function initProposal() {
 }
 
 /* ==========================================================================
-   6. Act 4: VIP Court Vouchers
+   7. Panel 5: Vouchers
    ========================================================================== */
 function initVouchers() {
     const vouchersGrid = document.getElementById('vouchers-grid');
@@ -610,41 +607,8 @@ function initVouchers() {
 
     fetch('/api/coupons')
         .then(res => res.json())
-        .then(data => {
-            renderCoupons(data.coupons);
-        })
-        .catch(() => {
-            renderCoupons([
-                {
-                    id: "c1",
-                    icon: "🥤",
-                    title: "Post-Padel Smoothie / Drink",
-                    desc: "Redeemable for your favorite iced beverage, paid for by me after our next session.",
-                    badge: "Valid Anytime"
-                },
-                {
-                    id: "c2",
-                    icon: "🎾",
-                    title: "Ball Boy / Ball Girl Pass",
-                    desc: "I will retrieve 100% of the wild balls that bounce over the fence without complaining.",
-                    badge: "Special Court Perk"
-                },
-                {
-                    id: "c3",
-                    icon: "🍽️",
-                    title: "Dinner Date of Your Choice",
-                    desc: "You pick the spot, you pick the cuisine, zero objections permitted.",
-                    badge: "VIP Date Pass"
-                },
-                {
-                    id: "c4",
-                    icon: "💆‍♂️",
-                    title: "Post-Match Shoulder Reset",
-                    desc: "10-minute shoulder / hand massage to recover from carrying our team.",
-                    badge: "Recovery Mode"
-                }
-            ]);
-        });
+        .then(data => renderCoupons(data.coupons))
+        .catch(() => renderCoupons([]));
 
     function renderCoupons(coupons) {
         vouchersGrid.innerHTML = coupons.map(c => `
@@ -657,7 +621,7 @@ function initVouchers() {
                     <h4 class="voucher-title">${c.title}</h4>
                     <p class="voucher-desc">${c.desc}</p>
                 </div>
-                <div class="voucher-action">Click to Redeem 🎟️</div>
+                <div class="voucher-action">Click to Claim 🎟️</div>
             </div>
         `).join('');
 

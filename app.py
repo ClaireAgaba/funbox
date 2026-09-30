@@ -1,5 +1,4 @@
 import os
-import random
 from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
@@ -7,85 +6,85 @@ app = Flask(__name__)
 QUIZ_QUESTIONS = [
     {
         "id": 1,
-        "question": "Considering you are literally Level 4+ (highest in the country 🙄) and I'm... well, vibing at my own level... what happens when we play?",
+        "question": "We talk about padel literally all the time. Since your level is way higher than mine, when we finally play, what's the actual plan?",
         "options": [
-            {"id": "a", "text": "You go easy on me like a gentleman, but I still celebrate every single point like I won Wimbledon 🏆", "comment": "A point won against a Level 4+ counts as an international championship in my book!"},
-            {"id": "b", "text": "I boldly guarantee I will beat you 6-0 through sheer willpower and questionable line calls 💅", "comment": "Confidence is 90% of the game. Watch out!"},
-            {"id": "c", "text": "You do all the running and smashes while I look aesthetic and provide moral support on court 🎾", "comment": "Honest division of labor. Aesthetics matter."},
-            {"id": "d", "text": "We play a friendly match once in a while, but loser admits the other is cooler. (Spoiler: It's me) 😎", "comment": "Rankings don't measure coolness, let's be real."}
+            {"id": "a", "text": "You go easy on me like a gentleman, but I still celebrate every single point like I won a trophy 🏆", "comment": "If I win even one point against your level, I'm never letting you forget it 😂"},
+            {"id": "b", "text": "I somehow manage to win through pure luck and sheer determination 💅", "comment": "Underestimate me at your own risk!"},
+            {"id": "c", "text": "You do all the smashes and running, and I just look good on court 🎾", "comment": "Fair division of labor honestly."},
+            {"id": "d", "text": "We just have fun, and loser buys the post-game food/drinks 🥤", "comment": "Best plan. Winner gets bragging rights too."}
         ]
     },
     {
         "id": 2,
-        "question": "We're packing the car for a spontaneous road trip with no set destination. What is your designated duty?",
+        "question": "You're a big nature person and we've talked about sunsets. What's our ideal golden hour setup?",
         "options": [
-            {"id": "a", "text": "Driver & playlist curator (subject to my strict aux cord inspection 🎶)", "comment": "Every great road trip lives and dies by the playlist."},
-            {"id": "b", "text": "Chief Snack Officer & Navigator (even when we take scenic 'wrong' turns) 🍫", "comment": "Getting lost with good snacks is the best part of the trip."},
-            {"id": "c", "text": "Making me laugh the entire drive until my cheeks hurt 😂", "comment": "Best passenger entertainment service guaranteed."},
-            {"id": "d", "text": "All of the above, plus pulling over whenever I spot a breathtaking view 📸", "comment": "10/10 road trip co-pilot etiquette."}
+            {"id": "a", "text": "A quiet scenic spot outdoors, chilled drinks, just talking with no rush 🌅", "comment": "Literally nothing beats this vibe."},
+            {"id": "b", "text": "A drive to somewhere with a great view and good music playing 🚗🎶", "comment": "Golden hour drives hit different."},
+            {"id": "c", "text": "Sitting somewhere quiet in nature and watching the sky change colors 🌄", "comment": "Peaceful and easy, exactly how it should be."},
+            {"id": "d", "text": "All of the above, obviously ✨", "comment": "The only right answer."}
         ]
     },
     {
         "id": 3,
-        "question": "Post-game or weekend evening: How are we handling sunset watching?",
+        "question": "Whenever we talk, you always have the best takeaways and insights. What happens on a long road trip drive?",
         "options": [
-            {"id": "a", "text": "Chilled drinks, favorite songs, watching golden hour with zero rush 🌅🍹", "comment": "The ultimate decompression after a hectic week."},
-            {"id": "b", "text": "Deep conversations and laughing about missed padel shots 💬", "comment": "Debriefing our match highlights (and lowlights) over sunset is top tier."},
-            {"id": "c", "text": "Finding a secret rooftop or hilltop spot with the prettiest view 🌄", "comment": "I'm scouting the locations as we speak."},
-            {"id": "d", "text": "Analyzing if a Level 4+ vibora could technically smash into the setting sun 🚀", "comment": "Don't tempt yourself, keep the balls in the court!"}
+            {"id": "a", "text": "Deep conversations that make a 3-hour drive feel like 20 minutes 💭", "comment": "Our conversations always flow so easily."},
+            {"id": "b", "text": "You dropping your smart takeaways while I handle car snacks and DJ duties 🎶", "comment": "A match made in heaven."},
+            {"id": "c", "text": "Taking random turns just to see where the road takes us 🛣️", "comment": "Spontaneous adventures are always the best memories."},
+            {"id": "d", "text": "Laughing so much our cheeks hurt before we even get there 😂", "comment": "Guaranteed 100% of the time."}
         ]
     },
     {
         "id": 4,
-        "question": "Final challenge: Are you brave enough to step on court for a casual game, knowing I plan to win regardless of your ranking?",
+        "question": "Honest question: when are we actually doing this road trip and catching that sunset?",
         "options": [
-            {"id": "a", "text": "Challenge accepted! I'll prepare to be humbled by your unpredicted tactics 🫡", "comment": "That's the spirit! Prepare for chaos."},
-            {"id": "b", "text": "Only if we catch a scenic sunset and grab dinner right after 🌅🍽️", "comment": "Deal! That was always part of the master plan."},
-            {"id": "c", "text": "I wouldn't miss a game with you for anything 🌟", "comment": "Smooth answer... you definitely earned points for that one."},
-            {"id": "d", "text": "Yes, but winner gets bragging rights until our next road trip 🚗💨", "comment": "High stakes! Game on!"}
+            {"id": "a", "text": "As soon as we pick a weekend (after our padel match) 🎾🌅", "comment": "Deal! It's officially on the calendar."},
+            {"id": "b", "text": "Whenever you're free, I'm already in 🚗💨", "comment": "Love the enthusiasm!"},
+            {"id": "c", "text": "I'm already putting together the road trip playlist 🎵", "comment": "It better have some good ones on it!"},
+            {"id": "d", "text": "Right after I finish this app 😉", "comment": "That's what I like to hear."}
         ]
     }
 ]
 
 LOVE_COMPLIMENTS = [
-    "Ranked Level 4+ on the court, but ranked #1 in charm in my book ✨",
-    "I might not have your backhand, but I definitely have your attention 😉",
-    "Getting to know you has been my absolute favorite plot twist this month 💫",
-    "Ready for scenic sunsets, spontaneous road trips, and beating you at padel (somehow) 🌅",
-    "You make every conversation feel effortlessly fun and easy 😊",
-    "Even as the country's top player, you're surprisingly humble and sweet 🎾",
-    "Your laugh is contagious in the best way possible 💖",
-    "Secretly counting down to our next match, sunset drive, and dinner 🥂"
+    "You're genuinely so smart and I love your takeaways from our conversations 🧠✨",
+    "How much you love nature and being outdoors 🌿🌅",
+    "Even though your padel level is way higher than mine, you're so down to earth about it 🎾",
+    "How effortless and easy our conversations always feel 😊",
+    "Looking forward to that road trip, good music, and catching the sunset with you 🚗🌄",
+    "You have the best perspective on things and I really admire that 💫",
+    "I still think I could score a couple points against you on court though 😉",
+    "Getting to know you has been such a sweet highlight lately 💖"
 ]
 
 COUPONS = [
     {
         "id": "c1",
         "icon": "🌅",
-        "title": "Golden Hour Sunset Pass",
-        "desc": "Redeemable for an evening drive to catch the sunset, complete with iced drinks and zero rush.",
-        "badge": "VIP Sunset Perk"
+        "title": "Sunset Drive Pass",
+        "desc": "An evening drive to a quiet scenic spot to watch golden hour, my treat.",
+        "badge": "Nature & Chill"
     },
     {
         "id": "c2",
         "icon": "🚗",
-        "title": "Spontaneous Road Trip Co-Pilot",
-        "desc": "One day-trip getaway. You pick the direction, I supply snacks, good vibes, and car karaoke.",
-        "badge": "Adventure Mode"
+        "title": "Road Trip Co-Pilot",
+        "desc": "One spontaneous road trip. Good music, car snacks, and scenic stops.",
+        "badge": "Adventure Pass"
     },
     {
         "id": "c3",
         "icon": "🎾",
-        "title": "The Underdog Padel Match",
-        "desc": "A casual friendly game where you promise not to unleash 100% tournament power (and I still try to win).",
-        "badge": "Friendly Rematch"
+        "title": "Casual Padel Match",
+        "desc": "One friendly game where you promise to take it easy (and I still try to beat you).",
+        "badge": "Court Challenge"
     },
     {
         "id": "c4",
-        "icon": "🍦",
-        "title": "Post-Match Winner's Treat",
-        "desc": "Loser buys ice cream, smoothies, or dinner. (Since you're Level 4+, the odds are high you're treating me 😉).",
-        "badge": "Sweet Victory"
+        "icon": "🍕",
+        "title": "Post-Game Dinner & Drinks",
+        "desc": "Good food and catching up after our match, no debate on the spot.",
+        "badge": "Foodie Perk"
     }
 ]
 
@@ -99,13 +98,11 @@ def get_quiz():
 
 @app.route('/api/quiz-grade', methods=['POST'])
 def grade_quiz():
-    data = request.get_json() or {}
-    answers = data.get("answers", {})
     return jsonify({
         "score": 100,
-        "title": "Unbeatable Synergy: 100% Match! 🏆",
-        "verdict": "Diagnostics complete: Even with the Level 4+ vs. Challenger gap, your chemistry across road trips, sunsets, and court banter is off the charts. The federation officially approves this duo.",
-        "badge": "Certified MVP & Adventure Partner"
+        "title": "100% Vibe Match ✨",
+        "verdict": "Okay yeah, our chemistry is undeniably great. The road trip, sunset watching, and padel game are officially happening.",
+        "badge": "Approved by ACL"
     })
 
 @app.route('/api/compliments', methods=['GET'])

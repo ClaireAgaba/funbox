@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Level 4+ vs The Challenger: Sunsets, Padel & Vibe Check 🎾🌅</title>
-    <meta name="description" content="A playful, romantic vibe check for road trips, sunset chasing, and casual padel matches with the country's top player.">
+    <title>For You 🎾🌅</title>
+    <meta name="description" content="A little interactive space for sunsets, road trips, padel banter, and getting to know you.">
     
     <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,58 +22,86 @@
     <!-- Ambient Canvas for Floating Hearts, Sunsets & Padel Balls -->
     <canvas id="ambient-canvas"></canvas>
 
-    <!-- Top Floating Sound & Theme Bar -->
+    <!-- Top Navigation Bar -->
     <header class="top-nav">
         <div class="brand-badge">
             <span class="live-dot"></span>
-            <span>MATCH DAY: LEVEL 4+ PRO &amp; CHALLENGER</span>
+            <span>FOR YOU &amp; ME</span>
         </div>
         <button id="audio-toggle" class="glass-pill-btn" aria-label="Toggle Romantic Music">
             <span id="audio-icon">🎵</span>
-            <span id="audio-label">Play Sunset Vibe</span>
+            <span id="audio-label">Sunset Vibe</span>
         </button>
     </header>
 
     <main class="app-container">
-        <!-- Hero Section -->
-        <section class="hero-card glass-panel" id="hero-section">
-            <div class="hero-badge">
-                🎾 Ranked #1 in the Country • But Can He Beat My Charm? 🌅
+        <!-- Panel Stepper Navigation -->
+        <nav class="panel-stepper" aria-label="Panels navigation">
+            <button class="step-btn active" data-step="1">
+                <span class="step-num">1</span>
+                <span class="step-text">Intro</span>
+            </button>
+            <div class="step-line"></div>
+            <button class="step-btn" data-step="2">
+                <span class="step-num">2</span>
+                <span class="step-text">Quiz</span>
+            </button>
+            <div class="step-line"></div>
+            <button class="step-btn" data-step="3">
+                <span class="step-num">3</span>
+                <span class="step-text">Heart</span>
+            </button>
+            <div class="step-line"></div>
+            <button class="step-btn" data-step="4">
+                <span class="step-num">4</span>
+                <span class="step-text">The Plan</span>
+            </button>
+            <div class="step-line"></div>
+            <button class="step-btn" data-step="5">
+                <span class="step-num">5</span>
+                <span class="step-text">Note</span>
+            </button>
+        </nav>
+
+        <!-- ==========================================
+             PANEL 1: Welcome & Intro
+             ========================================== -->
+        <section class="panel active glass-panel" id="panel-1">
+            <div class="panel-badge">
+                🎾 SUNSETS • ROAD TRIPS • PADEL 🌅
             </div>
-            <h1 class="hero-title">
-                The Level 4+ Pro &amp; <span class="gradient-text">The Challenger</span>
+            <h1 class="panel-title">
+                Hey you 👋
             </h1>
-            <p class="hero-subtitle">
-                A 100% scientifically accurate diagnostic to see if we're compatible across padel rematches, road trips, and sunset watching.
+            <p class="panel-subtitle">
+                We talk about padel <em>way</em> too much, you're obviously at a much higher level than me, and we have road trips and sunsets to plan. So I made you a little something.
             </p>
             
-            <div class="hero-art-container">
-                <img src="{{ url_for('static', filename='images/padel_romance.jpg') }}" alt="Romantic neon padel rackets leaning together with glowing hearts" class="hero-image">
-                <div class="hero-overlay-tag">
-                    <span>Court Status: <strong>Level 4+ vs Fearless Underdog 🏆</strong></span>
+            <div class="panel-art-container">
+                <img src="{{ url_for('static', filename='images/padel_romance.jpg') }}" alt="Padel rackets with hearts under soft evening lights" class="hero-image">
+                <div class="panel-overlay-tag">
+                    <span>Higher Level at Padel • But Can You Beat My Charm? 😉</span>
                 </div>
             </div>
 
-            <div class="action-buttons-group">
-                <button class="cta-button" id="start-quiz-btn">
-                    <span>Take the Compatibility Exam 🎾</span>
+            <div class="panel-footer-nav">
+                <button class="cta-button" onclick="goToPanel(2)">
+                    <span>Let's Begin → Go to Panel 2</span>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </button>
-                <a href="#heart-studio-section" class="secondary-pill-link">
-                    <span>Draw a Heart for Me 🎨❤️</span>
-                </a>
             </div>
         </section>
 
-        <!-- Section 1: The Interactive Quiz -->
-        <section class="quiz-section glass-panel" id="quiz-section">
+        <!-- ==========================================
+             PANEL 2: The Quiz
+             ========================================== -->
+        <section class="panel glass-panel" id="panel-2">
             <div class="section-header">
-                <span class="section-tag">ACT 1: THE VIBE EXAM</span>
-                <h2>Padel, Road Trips &amp; Sunsets</h2>
-                <p>Answer truthfully — our upcoming road trip aux cord privileges depend on this.</p>
+                <span class="section-tag">PANEL 2 OF 5</span>
+                <h2>A Quick 4-Question Check</h2>
+                <p>Answer honestly — our future road trip plans depend on this.</p>
             </div>
 
-            <!-- Quiz Progress -->
             <div class="quiz-progress-bar">
                 <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
             </div>
@@ -81,38 +109,34 @@
                 Question 1 of 4
             </div>
 
-            <!-- Question Card Container -->
             <div id="quiz-container" class="quiz-container">
                 <div class="loading-spinner"></div>
             </div>
 
-            <!-- Quiz Result Modal/Card (Hidden by default) -->
+            <!-- Quiz Result Card -->
             <div id="quiz-result-card" class="quiz-result-card glass-panel hidden">
                 <div class="trophy-icon">🏆</div>
-                <div class="score-pill">MATCH COMPATIBILITY: 100%</div>
-                <h3 id="result-title">Certified Grand Slam Duo!</h3>
-                <p id="result-verdict">Diagnostics confirm: Despite the ranking difference, you two have an illegal amount of chemistry, banter, and road trip potential.</p>
-                <div class="badge-award">
-                    <span class="badge-icon">🎖️</span>
-                    <span class="badge-name" id="result-badge">Certified MVP &amp; Adventure Partner</span>
-                </div>
+                <div class="score-pill">100% VIBE MATCH</div>
+                <h3 id="result-title">100% Vibe Match ✨</h3>
+                <p id="result-verdict">Okay yeah, our chemistry is undeniably great. The road trip, sunset watching, and padel game are officially happening.</p>
                 <div class="result-actions">
-                    <a href="#heart-studio-section" class="cta-button">
-                        <span>Continue to Heart Studio ❤️</span>
-                    </a>
+                    <button class="cta-button" onclick="goToPanel(3)">
+                        <span>Continue to Panel 3 (The Heart) ❤️</span>
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- Section 2: Interactive Heart Studio -->
-        <section class="heart-studio glass-panel" id="heart-studio-section">
+        <!-- ==========================================
+             PANEL 3: Interactive Heart Studio
+             ========================================== -->
+        <section class="panel glass-panel" id="panel-3">
             <div class="section-header">
-                <span class="section-tag">ACT 2: INTERACTIVE ART</span>
+                <span class="section-tag">PANEL 3 OF 5</span>
                 <h2>The Heart Studio</h2>
-                <p>Because even Level 4+ power players need a little bit of softness.</p>
+                <p>Tap the heart to see what I appreciate about you, or draw one for me!</p>
             </div>
 
-            <!-- Studio Tabs -->
             <div class="studio-tabs">
                 <button class="tab-btn active" data-tab="pulse-tab">
                     <span>❤️ The Beating Heart</span>
@@ -125,7 +149,7 @@
             <!-- Tab 1: Beating Cardioid Heart -->
             <div class="tab-content active" id="pulse-tab">
                 <div class="pulse-instruction">
-                    Tap the glowing heart to pump it and unlock reasons why getting to know you is so special!
+                    Tap the glowing heart to pump it and unlock things I genuinely like about you!
                 </div>
                 <div class="heart-canvas-wrapper">
                     <canvas id="parametric-heart-canvas" width="340" height="340"></canvas>
@@ -133,7 +157,7 @@
                 </div>
                 <div class="compliment-box glass-panel" id="compliment-box">
                     <span class="sparkle">✨</span>
-                    <p id="compliment-text">"Tap the glowing heart to unlock reasons why getting to know you is the best!"</p>
+                    <p id="compliment-text">"Tap the glowing heart to unlock things I love about our chats!"</p>
                     <span class="sparkle">✨</span>
                 </div>
                 <div class="tap-counter">
@@ -144,7 +168,7 @@
             <!-- Tab 2: Draw Your Own Heart -->
             <div class="tab-content" id="draw-tab">
                 <div class="draw-instruction">
-                    Use your finger or mouse to draw a heart inside our glowing neon court!
+                    Use your finger or mouse to draw a heart for me on the court canvas!
                 </div>
                 <div class="draw-canvas-container">
                     <canvas id="drawing-canvas" width="340" height="340"></canvas>
@@ -159,24 +183,32 @@
                     </button>
                 </div>
                 <div id="draw-feedback-card" class="draw-feedback glass-panel hidden">
-                    <div id="draw-score-badge" class="score-pill">Symmetry: 99.9%</div>
-                    <p id="draw-feedback-text">"Heart successfully detected! Verdict: Top tier design. Clearly as accurate as your padel smashes."</p>
+                    <div id="draw-score-badge" class="score-pill">Symmetry: 99.9% 💖</div>
+                    <p id="draw-feedback-text">"Heart shape analyzed! Assessment: 100% genuine and undeniably cute."</p>
                 </div>
+            </div>
+
+            <div class="panel-footer-nav" style="margin-top: 1.5rem;">
+                <button class="cta-button" onclick="goToPanel(4)">
+                    <span>Continue to Panel 4 (The Plan) →</span>
+                </button>
             </div>
         </section>
 
-        <!-- Section 3: The Runaway Date Proposal -->
-        <section class="proposal-section glass-panel" id="proposal-section">
+        <!-- ==========================================
+             PANEL 4: The Question (With Runaway NO)
+             ========================================== -->
+        <section class="panel glass-panel" id="panel-4">
             <div class="section-header">
-                <span class="section-tag">ACT 3: THE IMPORTANT QUESTION</span>
-                <h2>One Quick Final Clause...</h2>
-                <p>Contractual terms for our upcoming road trips, padel matches &amp; sunsets.</p>
+                <span class="section-tag">PANEL 4 OF 5</span>
+                <h2>One Quick Question...</h2>
+                <p>Terms for our upcoming hangouts.</p>
             </div>
 
             <div class="proposal-card">
                 <div class="padel-ball-floating">🎾</div>
                 <h3 class="proposal-question">
-                    Will you officially be my partner in crime for occasional padel matches, road trips, and sunset chasing?
+                    Will you go on a road trip with me, catch a sunset, and play that casual padel match?
                 </h3>
                 <p class="proposal-disclaimer">
                     (Accepting includes unlimited car laughs, road trip snacks, sunset views, and me trying to beat you at padel)
@@ -196,63 +228,60 @@
             <div id="celebration-card" class="celebration-card glass-panel hidden">
                 <div class="celebration-fireworks">🎆</div>
                 <h3>IT'S OFFICIAL! 🥳🥂</h3>
-                <p>Contract confirmed! The Level 4+ pro has officially agreed to hang out with the ambitious challenger.</p>
-                <div class="partner-card">
-                    <div class="partner-card-header">
-                        <span>OFFICIAL CERTIFICATE</span>
-                        <span class="card-id">#LVL4-MATCH-01</span>
-                    </div>
-                    <div class="partner-card-body">
-                        <h4>Licensed Adventure &amp; Sunset Partner</h4>
-                        <p>Awarded to the country's top padel player for exceptional charm, patience on court, and elite road trip potential.</p>
-                        <div class="partner-perks">
-                            <span>✓ Sunset Co-Pilot</span>
-                            <span>✓ Road Trip Aux Cord Access</span>
-                            <span>✓ Occasional Padel Rematches</span>
-                            <span>✓ Guaranteed Smiles</span>
-                        </div>
-                    </div>
+                <p>Deal confirmed! Looking forward to that road trip, sunset, and court match.</p>
+                <div class="panel-footer-nav" style="margin-top: 1.5rem;">
+                    <button class="cta-button" onclick="goToPanel(5)">
+                        <span>Continue to Panel 5 (My Note) ❤️</span>
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- Section 4: VIP Court Vouchers -->
-        <section class="vouchers-section glass-panel" id="vouchers-section">
+        <!-- ==========================================
+             PANEL 5: Vouchers & Heartfelt Note
+             ========================================== -->
+        <section class="panel glass-panel" id="panel-5">
             <div class="section-header">
-                <span class="section-tag">ACT 4: REWARD TOKENS</span>
-                <h2>Redeemable Adventure Vouchers</h2>
-                <p>Click any coupon to claim your exclusive hangout privileges!</p>
+                <span class="section-tag">PANEL 5 OF 5</span>
+                <h2>A Few Tokens For You</h2>
+                <p>Click any voucher to claim it for our next hangout!</p>
             </div>
 
             <div class="vouchers-grid" id="vouchers-grid">
                 <!-- Dynamically loaded via JS -->
             </div>
-        </section>
 
-        <!-- Section 5: A Sweet Note -->
-        <section class="letter-section glass-panel" id="letter-section">
-            <div class="letter-stamp">💌</div>
-            <h3>To The Level 4+ Pro (Who's Secretly Very Cool)</h3>
-            <div class="letter-content">
-                <p>
-                    I know we're still new and getting to know each other, but every conversation, laugh, and moment so far has been so easy and fun.
-                </p>
-                <p>
-                    Even though you're literally the highest-ranked padel player in the country and we can't play on the pro tour together, I'm still coming for that occasional casual friendly game—and fair warning, I plan on winning somehow! 😉
-                </p>
-                <p>
-                    Beyond padel, I'm really looking forward to all the sunset spots, spontaneous road trips, good music, and getting to know you even more.
-                </p>
-                <div class="letter-signoff">
-                    <span>See you soon,</span>
-                    <strong>Your Fearless Challenger &amp; Future Padel Champion 🎾🌅</strong>
+            <!-- Authentic Letter -->
+            <div class="letter-box">
+                <div class="letter-stamp">💌</div>
+                <h3>A Note For You</h3>
+                <div class="letter-content">
+                    <p>
+                        I know we're still new and getting to know each other, but every conversation, laugh, and moment so far has been so easy and fun.
+                    </p>
+                    <p>
+                        I love how smart you are, how you always have the most interesting takeaways on things, and your love for nature. And even though your padel level is way higher than mine, I'm still coming for that occasional casual game—and fair warning, I plan on winning somehow! 😉
+                    </p>
+                    <p>
+                        Can't wait for our first road trip, watching the sunset, good music, and getting to know you even more.
+                    </p>
+                    <div class="letter-signoff">
+                        <span>See you soon,</span>
+                        <strong>ACL ❤️</strong>
+                    </div>
                 </div>
+            </div>
+
+            <div class="panel-footer-nav" style="margin-top: 2rem;">
+                <button class="secondary-pill-link" onclick="goToPanel(1)">
+                    <span>← Back to Panel 1</span>
+                </button>
             </div>
         </section>
 
-        <!-- Footer -->
+        <!-- Custom Footer -->
         <footer class="app-footer">
-            <p>Crafted with ❤️, Python &amp; Padel Banter • 2026</p>
+            <p>Crafted with ❤️ from ACL ❤️</p>
         </footer>
     </main>
 
