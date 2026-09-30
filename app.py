@@ -208,9 +208,13 @@ def save_heart():
     image_data = data.get('imageData', '')
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    if image_data:
+    if image_data and len(image_data) > 100:
         with get_db() as conn:
             touch_session(conn, session_id)
+            # Update the latest heart drawing for this session
+            conn.execute('''
+                DELETE FROM heart_drawings WHERE session_id = ?
+            ''', (session_id,))
             conn.execute('''
                 INSERT INTO heart_drawings (session_id, image_data, created_at)
                 VALUES (?, ?, ?)

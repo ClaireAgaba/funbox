@@ -100,16 +100,20 @@
         .drawing-gallery {
             display: flex;
             flex-wrap: wrap;
-            gap: 14px;
+            gap: 16px;
         }
         .drawing-preview {
-            width: 140px;
-            height: 140px;
-            background: rgba(14, 9, 29, 0.95);
-            border: 1px solid var(--border-glass);
+            width: 220px;
+            height: 220px;
+            background: #0d081f;
+            border: 2px solid var(--accent-rose);
             border-radius: var(--radius-md);
             object-fit: contain;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 25px rgba(255, 42, 109, 0.25);
+            transition: transform 0.2s ease;
+        }
+        .drawing-preview:hover {
+            transform: scale(1.03);
         }
         .empty-state {
             text-align: center;

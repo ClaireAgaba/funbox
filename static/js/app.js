@@ -34,6 +34,10 @@ function initPanelNavigation() {
 }
 
 window.goToPanel = function(stepNumber) {
+    if (typeof window.saveDrawnHeart === 'function') {
+        window.saveDrawnHeart();
+    }
+
     const panels = document.querySelectorAll('.panel');
     const stepButtons = document.querySelectorAll('.step-btn');
 
@@ -525,11 +529,35 @@ function initHeartStudio() {
             dCtx.stroke();
         }
 
+        function saveDrawnHeart() {
+            if (drawnPoints.length >= 2) {
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = drawCanvas.width;
+                tempCanvas.height = drawCanvas.height;
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCtx.fillStyle = '#0d081f';
+                tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+                tempCtx.drawImage(drawCanvas, 0, 0);
+
+                const imgData = tempCanvas.toDataURL('image/png');
+                fetch('/api/save-heart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: getSessionId(),
+                        imageData: imgData
+                    })
+                }).catch(() => {});
+            }
+        }
+        window.saveDrawnHeart = saveDrawnHeart;
+
         function stopDrawing(e) {
             if (!isDrawing) return;
-            e.preventDefault();
+            if (e && e.cancelable) e.preventDefault();
             isDrawing = false;
             dCtx.closePath();
+            saveDrawnHeart();
         }
 
         drawCanvas.addEventListener('mousedown', startDrawing);
@@ -538,7 +566,7 @@ function initHeartStudio() {
 
         drawCanvas.addEventListener('touchstart', startDrawing, { passive: false });
         drawCanvas.addEventListener('touchmove', draw, { passive: false });
-        window.addEventListener('touchend', stopDrawing);
+        window.addEventListener('touchend', stopDrawing, { passive: false });
 
         clearBtn?.addEventListener('click', () => {
             dCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
@@ -547,25 +575,16 @@ function initHeartStudio() {
         });
 
         rateBtn?.addEventListener('click', () => {
-            if (drawnPoints.length < 15) {
+            if (drawnPoints.length < 5) {
                 alert("Draw a heart first! Don't leave it blank 😊");
                 return;
             }
 
             feedbackCard?.classList.remove('hidden');
             scoreBadge.textContent = 'Symmetry: 99.9% 💖';
-            feedbackText.textContent = '"Heart analyzed! Assessment: 100% genuine and undeniably cute."';
+            feedbackText.textContent = '"Heart analyzed! Assessment: 100% genuine and undeniably cute. (Saved for Claire!)"';
 
-            // Save his drawn heart image to server for Claire!
-            const imgData = drawCanvas.toDataURL('image/png');
-            fetch('/api/save-heart', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    sessionId: getSessionId(),
-                    imageData: imgData
-                })
-            }).catch(() => {});
+            saveDrawnHeart();
 
             if (window.confetti) {
                 confetti({
