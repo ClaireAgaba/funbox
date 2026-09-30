@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Padel & Chemistry Check 🎾💘</title>
+    <meta name="description" content="A playful, romantic padel-themed vibe check and interactive heart studio for us.">
+    
+    <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Ambient Canvas for Floating Hearts & Padel Balls -->
+    <canvas id="ambient-canvas"></canvas>
+
+    <!-- Top Floating Sound & Theme Bar -->
+    <header class="top-nav">
+        <div class="brand-badge">
+            <span class="live-dot"></span>
+            <span>MATCH DAY: YOU & ME</span>
+        </div>
+        <button id="audio-toggle" class="glass-pill-btn" aria-label="Toggle Romantic Music">
+            <span id="audio-icon">🎵</span>
+            <span id="audio-label">Play Vibe Music</span>
+        </button>
+    </header>
+
+    <main class="app-container">
+        <!-- Hero Section -->
+        <section class="hero-card glass-panel" id="hero-section">
+            <div class="hero-badge">
+                🎾 Official Doubles Assessment • Vibe Check 💘
+            </div>
+            <h1 class="hero-title">
+                Padel, Banter &amp; <span class="gradient-text">Chemistry Check</span>
+            </h1>
+            <p class="hero-subtitle">
+                A 100% scientifically proven (and completely unbiased) diagnostic to test if we are a match made in court &amp; heaven.
+            </p>
+            
+            <div class="hero-art-container">
+                <img src="{{ url_for('static', filename='images/padel_romance.jpg') }}" alt="Romantic neon padel rackets leaning together with glowing hearts" class="hero-image">
+                <div class="hero-overlay-tag">
+                    <span>Doubles Chemistry: <strong>Unstoppable</strong></span>
+                </div>
+            </div>
+
+            <div class="action-buttons-group">
+                <button class="cta-button" id="start-quiz-btn">
+                    <span>Take the Partner Quiz 🎾</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+                <a href="#heart-studio-section" class="secondary-pill-link">
+                    <span>Draw a Heart for Me 🎨❤️</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Section 1: The Interactive Quiz -->
+        <section class="quiz-section glass-panel" id="quiz-section">
+            <div class="section-header">
+                <span class="section-tag">ACT 1: THE WARMUP</span>
+                <h2>The Partner Vibe Exam</h2>
+                <p>Answer honestly — our future doubles ranking depends on this.</p>
+            </div>
+
+            <!-- Quiz Progress -->
+            <div class="quiz-progress-bar">
+                <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
+            </div>
+            <div class="quiz-step-indicator" id="quiz-step-indicator">
+                Question 1 of 4
+            </div>
+
+            <!-- Question Card Container -->
+            <div id="quiz-container" class="quiz-container">
+                <!-- Dynamically loaded via JS -->
+                <div class="loading-spinner"></div>
+            </div>
+
+            <!-- Quiz Result Modal/Card (Hidden by default) -->
+            <div id="quiz-result-card" class="quiz-result-card glass-panel hidden">
+                <div class="trophy-icon">🏆</div>
+                <div class="score-pill">MATCH COMPATIBILITY: 100%</div>
+                <h3 id="result-title">Certified Grand Slam Duo!</h3>
+                <p id="result-verdict">Diagnostics confirm: You two possess an illegal amount of banter, court synergy, and charm. The federation approves of this partnership.</p>
+                <div class="badge-award">
+                    <span class="badge-icon">🎖️</span>
+                    <span class="badge-name" id="result-badge">MVP Partner of the Year</span>
+                </div>
+                <div class="result-actions">
+                    <a href="#heart-studio-section" class="cta-button">
+                        <span>Continue to Heart Studio ❤️</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Interactive Heart Studio -->
+        <section class="heart-studio glass-panel" id="heart-studio-section">
+            <div class="section-header">
+                <span class="section-tag">ACT 2: INTERACTIVE ART</span>
+                <h2>The Heart Studio</h2>
+                <p>Because every great doubles duo needs a little bit of heart.</p>
+            </div>
+
+            <!-- Studio Tabs -->
+            <div class="studio-tabs">
+                <button class="tab-btn active" data-tab="pulse-tab">
+                    <span>❤️ The Beating Heart</span>
+                </button>
+                <button class="tab-btn" data-tab="draw-tab">
+                    <span>✍️ Draw Me a Heart</span>
+                </button>
+            </div>
+
+            <!-- Tab 1: Beating Cardioid Heart -->
+            <div class="tab-content active" id="pulse-tab">
+                <div class="pulse-instruction">
+                    Tap the heart to pump it and reveal secret compliments &amp; jokes!
+                </div>
+                <div class="heart-canvas-wrapper">
+                    <canvas id="parametric-heart-canvas" width="340" height="340"></canvas>
+                    <div class="heart-pulse-glow"></div>
+                </div>
+                <div class="compliment-box glass-panel" id="compliment-box">
+                    <span class="sparkle">✨</span>
+                    <p id="compliment-text">"Tap the glowing heart to unlock reasons why getting to know you is the best!"</p>
+                    <span class="sparkle">✨</span>
+                </div>
+                <div class="tap-counter">
+                    Hearts Pumped: <span id="tap-count">0</span> 💓
+                </div>
+            </div>
+
+            <!-- Tab 2: Draw Your Own Heart -->
+            <div class="tab-content" id="draw-tab">
+                <div class="draw-instruction">
+                    Use your finger or mouse to draw a heart inside the neon court canvas!
+                </div>
+                <div class="draw-canvas-container">
+                    <canvas id="drawing-canvas" width="340" height="340"></canvas>
+                    <div class="canvas-grid-lines"></div>
+                </div>
+                <div class="draw-controls">
+                    <button class="draw-btn secondary" id="clear-draw-btn">
+                        <span>🧹 Clear</span>
+                    </button>
+                    <button class="draw-btn primary" id="rate-draw-btn">
+                        <span>Rate My Heart ❤️</span>
+                    </button>
+                </div>
+                <div id="draw-feedback-card" class="draw-feedback glass-panel hidden">
+                    <div id="draw-score-badge" class="score-pill">Symmetry: 99.8%</div>
+                    <p id="draw-feedback-text">"Heart successfully detected! Verdict: Absolutely adorable and 100% boyfriend material."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: The Runaway Date Proposal -->
+        <section class="proposal-section glass-panel" id="proposal-section">
+            <div class="section-header">
+                <span class="section-tag">ACT 3: THE IMPORTANT QUESTION</span>
+                <h2>One Quick Final Clause...</h2>
+                <p>Terms and conditions for our upcoming matches &amp; hangouts.</p>
+            </div>
+
+            <div class="proposal-card">
+                <div class="padel-ball-floating">🎾</div>
+                <h3 class="proposal-question">
+                    Will you officially be my padel partner &amp; go on our next date together?
+                </h3>
+                <p class="proposal-disclaimer">
+                    (Accepting includes unlimited laughs, guaranteed good food, and post-match drinks)
+                </p>
+
+                <div class="proposal-buttons" id="proposal-buttons-area">
+                    <button class="btn-yes" id="yes-btn">
+                        <span>YES, ABSOLUTELY! 🎾🥂</span>
+                    </button>
+                    <button class="btn-no" id="no-btn">
+                        <span>No 🏃‍♂️</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Celebration Screen (Revealed on YES) -->
+            <div id="celebration-card" class="celebration-card glass-panel hidden">
+                <div class="celebration-fireworks">🎆</div>
+                <h3>IT'S OFFICIAL! 🥳🥂</h3>
+                <p>The contract is signed. No refunds, no trade-ins, just great matches and fun times ahead.</p>
+                <div class="partner-card">
+                    <div class="partner-card-header">
+                        <span>OFFICIAL CERTIFICATE</span>
+                        <span class="card-id">#PDL-MATCH-01</span>
+                    </div>
+                    <div class="partner-card-body">
+                        <h4>Licensed Padel &amp; Vibe Partner</h4>
+                        <p>Awarded to the coolest person on court for exceptional charm and elite compatibility.</p>
+                        <div class="partner-perks">
+                            <span>✓ Priority Court Booking</span>
+                            <span>✓ Free Post-Game Drinks</span>
+                            <span>✓ 100% More Smiles</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: VIP Court Vouchers -->
+        <section class="vouchers-section glass-panel" id="vouchers-section">
+            <div class="section-header">
+                <span class="section-tag">ACT 4: REWARD TOKENS</span>
+                <h2>Redeemable Match Vouchers</h2>
+                <p>Click any coupon to claim your exclusive court privileges!</p>
+            </div>
+
+            <div class="vouchers-grid" id="vouchers-grid">
+                <!-- Dynamically loaded via JS -->
+            </div>
+        </section>
+
+        <!-- Section 5: A Sweet Note -->
+        <section class="letter-section glass-panel" id="letter-section">
+            <div class="letter-stamp">💌</div>
+            <h3>To My Favorite Doubles Partner</h3>
+            <div class="letter-content">
+                <p>
+                    I know we're still new and getting to know each other, but every match, joke, and conversation with you has been so much fun.
+                </p>
+                <p>
+                    Whether we're nailing impossible shots or laughing at balls ricocheting off the back glass, I always leave with a huge smile. Looking forward to many more games, good food, and great times with you.
+                </p>
+                <div class="letter-signoff">
+                    <span>See you on the court,</span>
+                    <strong>Your Partner in Crime 🎾❤️</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Crafted with ❤️, Python &amp; Padel Banter • 2026</p>
+        </footer>
+    </main>
+
+    <!-- Main Logic -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
